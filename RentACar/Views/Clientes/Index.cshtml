@@ -1,0 +1,30 @@
+﻿@using RentACar_Modelos
+@model IEnumerable<Cliente>
+
+<div>
+    <h1>Clientes</h1>
+    @if (Model != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Identificador</th>
+                    <th scope="col">Nombre</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Cliente cliente in Model)
+                {
+                    <tr>
+                        <td scope="row">@cliente.Id</td>
+                        <td>@cliente.Nombre</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>No hay datos disponibles.</h3>
+    }
+</div>
