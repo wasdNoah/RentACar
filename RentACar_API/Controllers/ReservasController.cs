@@ -31,11 +31,14 @@ namespace RentACar_API.Controllers
                 {
                     Reserva reserva = new Reserva();
                     reserva.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
-                    reserva.FechaInicio = dt.Rows[i]["FechaInicio"].ToString();
-                    reserva.FechaFin = dt.Rows[i]["FechaFin"].ToString();
+                    reserva.FechaInicio = DateTime.Parse(dt.Rows[i]["FechaInicio"].ToString());
+                    reserva.FechaFin = DateTime.Parse(dt.Rows[i]["FechaFin"].ToString());
                     reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
+                    reserva.NombreCliente = dt.Rows[i]["NombreCliente"].ToString();
                     reserva.IdCliente = Convert.ToInt32(dt.Rows[i]["IdCliente"]);
+                    reserva.Matricula = dt.Rows[i]["Matricula"].ToString();
                     reserva.IdCoche = Convert.ToInt32(dt.Rows[i]["IdCoche"]);
+                    reserva.PrecioAlquilerCoche = Convert.ToDecimal(dt.Rows[i]["PrecioAlquilerCoche"]);
                     reserva.PrecioTotal = Convert.ToDecimal(dt.Rows[i]["PrecioTotal"]);
                     reservas.Add(reserva);
                 }

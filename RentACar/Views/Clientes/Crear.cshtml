@@ -1,0 +1,18 @@
+﻿@using RentACar_Modelos
+@model Cliente
+@{
+    ViewBag.Title = "Crear";
+}
+
+<h2>Nuevo cliente</h2>
+@using (Html.BeginForm("Crear", "Clientes", FormMethod.Post))
+{
+    <div>@Html.AntiForgeryToken()</div>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(cliente => cliente.Nombre)</td>
+            <td>@Html.EditorFor(cliente => cliente.Nombre)</td>
+        </tr>
+    </table>
+    <input class="btn-success" type="submit" value="Crear" />
+}

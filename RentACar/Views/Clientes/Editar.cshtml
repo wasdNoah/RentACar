@@ -1,0 +1,26 @@
+﻿@using RentACar_Modelos
+@model Cliente
+@{
+    ViewBag.Title = "Editar";
+}
+
+@if (!this.ViewData.ContainsKey("MensajeError"))
+{
+    <h2>Editar cliente</h2>
+    using (Html.BeginForm("Editar", "Clientes", FormMethod.Post))
+    {
+        <div>@Html.AntiForgeryToken()</div>
+        @Html.HiddenFor(cliente => cliente.EsActivo)
+        <table>
+            <tr>
+                <td>@Html.LabelFor(cliente => cliente.Nombre)</td>
+                <td>@Html.EditorFor(cliente => cliente.Nombre)</td>
+            </tr>
+        </table>
+        <input class="btn btn-primary" type="submit" value="Actualizar" />
+    }
+}
+else
+{
+    <p>@this.ViewData["MensajeError"]</p>
+}

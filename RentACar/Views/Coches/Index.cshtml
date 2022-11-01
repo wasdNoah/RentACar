@@ -1,36 +1,40 @@
 ﻿@using RentACar_Modelos
 @model IEnumerable<Coche>
 
-<div>
-    <h1>Coches</h1>
-    @if (Model != null)
-    {
-        <table class="table">
-            <thead>
+<h1>Coches</h1>
+@Html.ActionLink("Nuevo Coche", "Crear", null, new { @class = "btn btn-primary" })
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Matricula</th>
+                <th scope="col">Color</th>
+                <th scope="col">Precio de Alquiler</th>
+                <th scope="col">Garaje</th>
+                <th scope="col">Marca</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Coche coche in Model)
+            {
                 <tr>
-                    <th scope="col">Matricula</th>
-                    <th scope="col">Color</th>
-                    <th scope="col">Precio de Alquiler</th>
-                    <th scope="col">Garaje</th>
-                    <th scope="col">Marca</th>
+                    <td scope="row">@coche.Matricula</td>
+                    <td>@coche.Color</td>
+                    <td>@coche.PrecioAlquiler</td>
+                    <td>@coche.Garaje</td>
+                    <td>@coche.Marca</td>
+                    <td>
+                        @Html.ActionLink("Editar", "Editar", null, new { @class = "btn btn-warning" })
+                        @Html.ActionLink("Eliminar", "Eliminar", null, new { @class = "btn btn-danger" })
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (Coche coche in Model)
-                {
-                    <tr>
-                        <td scope="row">@coche.Matricula</td>
-                        <td>@coche.Color</td>
-                        <td>@coche.PrecioAlquiler</td>
-                        <td>@coche.Garaje</td>
-                        <td>@coche.Marca</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <h3>No hay datos disponibles.</h3>
-    }
-</div>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>No hay datos disponibles.</h3>
+}

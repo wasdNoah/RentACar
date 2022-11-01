@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace RentACar_API.Controllers
 {
@@ -30,13 +31,44 @@ namespace RentACar_API.Controllers
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     Cliente cliente = new Cliente();
-                    cliente.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
-                    cliente.Nombre = dt.Rows[i]["Nombre"].ToString();
-                    clientes.Add(cliente);
+                    if (Convert.ToInt32(dt.Rows[i]["esActivo"]) == 1)
+                    {
+                        cliente.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
+                        cliente.Nombre = dt.Rows[i]["Nombre"].ToString();
+                        clientes.Add(cliente);
+                    }
                 }
             }
 
             return clientes;
+        }
+
+        [HttpGet]
+        [Route("api/clientes/{id}")]
+        public IHttpActionResult ConsultarCliente(int id)
+        {
+            SqlCommand cmd = new SqlCommand("pr_ConsultarCliente", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", id);
+
+            SqlDataAdapter adaptador = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            adaptador.Fill(dt);
+
+            if (dt.Rows.Count == 0)
+            {
+                return this.NotFound();
+            }
+
+            DataRow row = dt.Rows[0];
+
+            Cliente cliente = new Cliente()
+            {
+                Id = Convert.ToInt32(row["Id"]),
+                Nombre = row["Nombre"].ToString()
+            };
+
+            return this.Ok(cliente);
         }
 
         [HttpPost]
@@ -65,9 +97,75 @@ namespace RentACar_API.Controllers
             }
             else
             {
-                return BadRequest();
+                return this.BadRequest();
             }
-            return Ok();
+            return this.Ok();
+        }
+
+        /// <summary>
+        /// Actualiza los datos de un usuario
+        /// </summary>
+        /// <param name="cliente"></param>
+        /// <returns>HttpActionResult</returns>
+        [HttpPut]
+        public IHttpActionResult ActualizarCliente(Cliente clienteActualizar)
+        {
+            if (clienteActualizar != null)
+            {
+                SqlCommand cmd = new SqlCommand("pr_ActualizarCliente", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", clienteActualizar.Id);
+                cmd.Parameters.AddWithValue("@nombre", clienteActualizar.Nombre);
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok();
+        }
+
+        [HttpDelete]
+        [Route("api/clientes/{id}")]
+        public async Task<IHttpActionResult> EliminarCliente(int id)
+        {
+            SqlCommand cmd = new SqlCommand("pr_CambiarEstadoCliente", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@tipoAccion", 1);
+
+            try
+            {
+                conn.Open();
+                await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return this.Ok();
         }
     }
 }

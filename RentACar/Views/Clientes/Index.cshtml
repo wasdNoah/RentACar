@@ -1,30 +1,39 @@
 ﻿@using RentACar_Modelos
 @model IEnumerable<Cliente>
 
+<h1>Clientes</h1>
 <div>
-    <h1>Clientes</h1>
-    @if (Model != null)
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Identificador</th>
-                    <th scope="col">Nombre</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (Cliente cliente in Model)
-                {
-                    <tr>
-                        <td scope="row">@cliente.Id</td>
-                        <td>@cliente.Nombre</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <h3>No hay datos disponibles.</h3>
-    }
+    @Html.ActionLink("Agregar cliente", "Crear", null, new { @class = "btn btn-primary" })
 </div>
+
+@if (Model == null)
+{
+    <h3>No hay datos disponibles.</h3>
+}
+
+@if (this.ViewData.ContainsKey("MensajeError"))
+{
+    <h3>@this.ViewData["MensajeError"]</h3>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Identificador</th>
+            <th scope="col">Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Cliente cliente in Model)
+        {
+            <tr>
+                <td scope="row">@cliente.Id</td>
+                <td>@cliente.Nombre</td>
+                <td>
+                    @Html.ActionLink("Editar", "Editar", new { clienteId = cliente.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Eliminar", "Eliminar", new { Id = cliente.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,51 @@
+﻿@using RentACar_Modelos
+@model Coche
+@{
+    ViewBag.Title = "Crear";
+    IEnumerable<Marca> listaMarcas = this.ViewData["listaMarcas"] as IEnumerable<Marca>;
+    IEnumerable<ColorCoche> listaColores = this.ViewData["listaColores"] as IEnumerable<ColorCoche>;
+    IEnumerable<Garaje> listaGarajes = this.ViewData["listaGarajes"] as IEnumerable<Garaje>;
+}
+
+<h2>Crear Coche</h2>
+@Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-info" })
+
+@using (Html.BeginForm("Crear", "Coches", FormMethod.Post))
+{
+    <div>@Html.AntiForgeryToken()</div>
+
+    <div class="form-group">
+        @Html.LabelFor(c => c.Matricula)
+        @Html.EditorFor(c => c.Matricula, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(c => c.Matricula, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Precio de Alquiler")
+        @Html.EditorFor(c => c.PrecioAlquiler, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0" } })
+        @Html.ValidationMessageFor(c => c.PrecioAlquiler, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(c => c.Marca)
+        @Html.DropDownListFor(c => c.IdMarca,
+                    new SelectList(listaMarcas, "IdMarca", "Nombre", listaMarcas.First().IdMarca),
+                    new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(c => c.Color)
+        @Html.DropDownListFor(c => c.IdColor,
+                    new SelectList(listaColores, "IdColor", "Color", listaColores.First().IdColor),
+                    new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(c => c.Garaje)
+        @Html.DropDownListFor(c => c.IdGaraje,
+                    new SelectList(listaGarajes, "IdGaraje", "Direccion", listaGarajes.First().IdGaraje),
+                    new { @class = "form-control" })
+    </div>
+
+    <input type="submit" class="btn btn-success" value="Crear" />
+}
