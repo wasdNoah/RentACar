@@ -1,10 +1,10 @@
-﻿@using RentACar_Modelos
-@model Coche
+﻿@using RentACar.Models
+@model CocheViewModel
 @{
     ViewBag.Title = "Crear";
-    IEnumerable<Marca> listaMarcas = this.ViewData["listaMarcas"] as IEnumerable<Marca>;
-    IEnumerable<ColorCoche> listaColores = this.ViewData["listaColores"] as IEnumerable<ColorCoche>;
-    IEnumerable<Garaje> listaGarajes = this.ViewData["listaGarajes"] as IEnumerable<Garaje>;
+    //IEnumerable<Marca> listaMarcas = this.ViewData["listaMarcas"] as IEnumerable<Marca>;
+    //IEnumerable<ColorCoche> listaColores = this.ViewData["listaColores"] as IEnumerable<ColorCoche>;
+    //IEnumerable<Garaje> listaGarajes = this.ViewData["listaGarajes"] as IEnumerable<Garaje>;
 }
 
 <h2>Crear Coche</h2>
@@ -12,40 +12,65 @@
 
 @using (Html.BeginForm("Crear", "Coches", FormMethod.Post))
 {
+    @*@Html.HiddenFor(x => x.SelectMarcas)
+    @Html.HiddenFor(x => x.SelectColores)
+    @Html.HiddenFor(x => x.SelectGarajes)*@
+
     <div>@Html.AntiForgeryToken()</div>
 
     <div class="form-group">
-        @Html.LabelFor(c => c.Matricula)
-        @Html.EditorFor(c => c.Matricula, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(c => c.Matricula, "", new { @class = "text-danger" })
+        @Html.LabelFor(c => c.Coche.Matricula)
+        @Html.EditorFor(c => c.Coche.Matricula, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(c => c.Coche.Matricula, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-group">
         @Html.Label("Precio de Alquiler")
-        @Html.EditorFor(c => c.PrecioAlquiler, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0" } })
-        @Html.ValidationMessageFor(c => c.PrecioAlquiler, "", new { @class = "text-danger" })
+        @Html.EditorFor(c => c.Coche.PrecioAlquiler, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0" } })
+        @Html.ValidationMessageFor(c => c.Coche.PrecioAlquiler, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(c => c.Marca)
-        @Html.DropDownListFor(c => c.IdMarca,
-                    new SelectList(listaMarcas, "IdMarca", "Nombre", listaMarcas.First().IdMarca),
+        @Html.LabelFor(c => c.SelectMarcas)
+        @Html.DropDownListFor(c => c.Coche.IdMarca,
+                    new SelectList(Model.SelectMarcas, "IdMarca", "Nombre", Model.SelectMarcas.First().IdMarca),
                     new { @class = "form-control" })
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(c => c.Color)
-        @Html.DropDownListFor(c => c.IdColor,
-                    new SelectList(listaColores, "IdColor", "Color", listaColores.First().IdColor),
+        @Html.LabelFor(c => c.SelectColores)
+        @Html.DropDownListFor(c => c.Coche.Color,
+                    new SelectList(Model.SelectColores, "IdColor", "Color", Model.SelectColores.First().IdColor),
                     new { @class = "form-control" })
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(c => c.Garaje)
-        @Html.DropDownListFor(c => c.IdGaraje,
-                    new SelectList(listaGarajes, "IdGaraje", "Direccion", listaGarajes.First().IdGaraje),
+        @Html.LabelFor(c => c.SelectGarajes)
+        @Html.DropDownListFor(c => c.Coche.Garaje,
+                    new SelectList(Model.SelectGarajes, "IdGaraje", "Direccion", Model.SelectGarajes.First().IdGaraje),
                     new { @class = "form-control" })
     </div>
+
+    @*<div class="form-group">
+            @Html.LabelFor(c => c.Marca)
+            @Html.DropDownListFor(c => c.IdMarca,
+                        new SelectList(listaMarcas, "IdMarca", "Nombre", listaMarcas.First().IdMarca),
+                        new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(c => c.Color)
+            @Html.DropDownListFor(c => c.IdColor,
+                        new SelectList(listaColores, "IdColor", "Color", listaColores.First().IdColor),
+                        new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(c => c.Garaje)
+            @Html.DropDownListFor(c => c.IdGaraje,
+                        new SelectList(listaGarajes, "IdGaraje", "Direccion", listaGarajes.First().IdGaraje),
+                        new { @class = "form-control" })
+        </div>*@
 
     <input type="submit" class="btn btn-success" value="Crear" />
 }

@@ -1,22 +1,24 @@
 ﻿@using RentACar_Modelos
 @model IEnumerable<Reserva>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Reservas";
 }
 
-<h2>Index</h2>
+<h2>Todas las reservas</h2>
+
+@Html.ActionLink("Agregar reserva", "Crear", null, new { @class = "btn btn-primary" })
 
 @if (Model != null)
 {
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Fecha Inicio</th>
-                <th scope="col">Fecha Final</th>
-                <th scope="col">Dias de Alquiler</th>
-                <th scope="col">Precio de Alquiler</th>
                 <th scope="col">Nombre de Cliente</th>
                 <th scope="col">Matricula de Coche</th>
+                <th scope="col">Precio de Alquiler</th>
+                <th scope="col">Dias de Alquiler</th>
+                <th scope="col">Fecha Inicio</th>
+                <th scope="col">Fecha Final</th>
                 <th scope="col">Precio Total</th>
             </tr>
         </thead>
@@ -24,12 +26,12 @@
             @foreach (var reserva in Model)
             {
                 <tr>
-                    <td scope="row">@reserva.FechaInicio.ToShortDateString()</td>
-                    <td scope="row">@reserva.FechaFin.ToShortDateString()</td>
-                    <td scope="row">@reserva.DiasAlquiler</td>
-                    <td scope="row">@reserva.PrecioAlquilerCoche</td>
                     <td scope="row">@reserva.NombreCliente</td>
                     <td scope="row">@reserva.Matricula</td>
+                    <td scope="row">@reserva.PrecioAlquilerCoche</td>
+                    <td scope="row">@reserva.DiasAlquiler</td>
+                    <td scope="row">@reserva.FechaInicio.ToShortDateString()</td>
+                    <td scope="row">@reserva.FechaFin.ToShortDateString()</td>
                     <td scope="row">@reserva.PrecioTotal</td>
                 </tr>
             }

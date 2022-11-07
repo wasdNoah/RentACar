@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace RentACar_API.Controllers
 {
@@ -33,17 +34,118 @@ namespace RentACar_API.Controllers
                     reserva.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
                     reserva.FechaInicio = DateTime.Parse(dt.Rows[i]["FechaInicio"].ToString());
                     reserva.FechaFin = DateTime.Parse(dt.Rows[i]["FechaFin"].ToString());
-                    reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
-                    reserva.NombreCliente = dt.Rows[i]["NombreCliente"].ToString();
                     reserva.IdCliente = Convert.ToInt32(dt.Rows[i]["IdCliente"]);
+                    reserva.NombreCliente = dt.Rows[i]["NombreCliente"].ToString();
                     reserva.Matricula = dt.Rows[i]["Matricula"].ToString();
-                    reserva.IdCoche = Convert.ToInt32(dt.Rows[i]["IdCoche"]);
                     reserva.PrecioAlquilerCoche = Convert.ToDecimal(dt.Rows[i]["PrecioAlquilerCoche"]);
                     reserva.PrecioTotal = Convert.ToDecimal(dt.Rows[i]["PrecioTotal"]);
+                    reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
                     reservas.Add(reserva);
                 }
             }
             return reservas;
+        }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> CrearReserva(Reserva reserva)
+        {
+            if (reserva == null)
+            {
+                return BadRequest("No existe reserva en la peticion.");
+            }
+
+            // verificar que el coche se encuentre disponible
+            using (SqlCommand cmd = new SqlCommand("pr_ConsultarCocheDisponible", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@matricula", reserva.Matricula);
+
+                IDbDataParameter resultadoSP = cmd.CreateParameter();
+                resultadoSP.Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add(resultadoSP);
+
+                try
+                {
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    conn.Close();
+
+                    if (Convert.ToInt32(resultadoSP.Value) == 0)
+                    {
+                        return BadRequest("El coche no se encuentra disponible.");
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            // verificar si el cliente cuenta con alguna reserva activa
+            using (SqlCommand cmd = new SqlCommand("pr_ClienteCuentaConReservaActiva", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id_cliente", reserva.IdCliente);
+                cmd.Parameters.AddWithValue("@fecha_inicio", reserva.FechaInicio);
+
+                IDbDataParameter resultadoSP = cmd.CreateParameter();
+                resultadoSP.Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add(resultadoSP);
+
+                try
+                {
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+
+                    if (Convert.ToInt32(resultadoSP.Value) == 1)
+                    {
+                        return BadRequest("Imposible agregar reserva. El cliente ya cuenta con otra reserva para la fecha establecida.");
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            // el coche se encuentra disponible y el cliente no cuenta con reservas activas
+            // el flujo continua con la creacion de la reserva
+            using (SqlCommand cmd = new SqlCommand("pr_CrearReserva", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id_cliente", reserva.IdCliente);
+                cmd.Parameters.AddWithValue("@matricula", reserva.Matricula);
+                cmd.Parameters.AddWithValue("@fecha_inicio", reserva.FechaInicio);
+                cmd.Parameters.AddWithValue("@fecha_fin", reserva.FechaFin);
+
+                try
+                {
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    conn.Close();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            return Ok("Reserva creada exitosamente.");
         }
     }
 }

@@ -18,6 +18,11 @@ namespace RentACar.Controllers
     {
         string urlBase = "https://localhost:44317";
 
+        //private readonly HttpClient _httpClient = new HttpClient()
+        //{
+        //    BaseAddress = new Uri("https://localhost:44317")
+        //};
+
         /// <summary>
         /// Consume endpoint para obtener todos los clientes y los envia a la vista
         /// </summary>
@@ -44,6 +49,31 @@ namespace RentACar.Controllers
             return this.View();
         }
 
+        private async Task<CocheViewModel> llenarFormulario(CocheViewModel modelo = null)
+        {
+            var marcas = await GetSelectMarcas();
+            var colores = await GetSelectColores();
+            var garajes = await GetSelectGarajes();
+
+            if (modelo == null)
+            {
+                modelo = new CocheViewModel()
+                {
+                    SelectMarcas = marcas.ToList(),
+                    SelectColores = colores.ToList(),
+                    SelectGarajes = garajes.ToList()
+                };
+
+                return modelo;
+            }
+
+            modelo.SelectMarcas = marcas.ToList();
+            modelo.SelectColores = colores.ToList();
+            modelo.SelectGarajes = garajes.ToList();
+
+            return modelo;
+        }
+
         /// <summary>
         /// Consulta los detalles para crear un nuevo coche
         /// </summary>
@@ -51,37 +81,7 @@ namespace RentACar.Controllers
         [HttpGet]
         public async Task<ActionResult> Crear()
         {
-            using (var clienteHttp = new HttpClient())
-            {
-                clienteHttp.BaseAddress = new Uri(urlBase);
-                ////clienteHttp.DefaultRequestHeaders.Accept.Clear();
-                ////clienteHttp.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage respuestaMarcas = await clienteHttp.GetAsync("api/marcas");
-                HttpResponseMessage respuestaColores = await clienteHttp.GetAsync("api/coloresCoche");
-                HttpResponseMessage respuestaGarajes = await clienteHttp.GetAsync("api/garajes");
-
-                if (respuestaMarcas.IsSuccessStatusCode
-                    && respuestaColores.IsSuccessStatusCode
-                    && respuestaGarajes.IsSuccessStatusCode)
-                {
-                    string resultadoMarcas = respuestaMarcas.Content.ReadAsStringAsync().Result;
-                    List<Marca> listaMarcas = JsonConvert.DeserializeObject<List<Marca>>(resultadoMarcas);
-
-                    string resultadoColores = respuestaColores.Content.ReadAsStringAsync().Result;
-                    List<ColorCoche> listaColores = JsonConvert.DeserializeObject<List<ColorCoche>>(resultadoColores);
-
-                    string resultadoGarajes = respuestaGarajes.Content.ReadAsStringAsync().Result;
-                    List<Garaje> listaGarajes = JsonConvert.DeserializeObject<List<Garaje>>(resultadoGarajes);
-
-                    this.ViewData["listaMarcas"] = listaMarcas;
-                    this.ViewData["listaColores"] = listaColores;
-                    this.ViewData["listaGarajes"] = listaGarajes;
-                }
-            }
-
-            return this.View();
-
+            return this.View(await llenarFormulario());
             ////this.ViewData["MensajeError"] = "Error al recopilar informacion para crear el coche.";
             ////return this.RedirectToAction("Index");
         }
@@ -93,18 +93,18 @@ namespace RentACar.Controllers
         /// <returns>Redireccion a la vista Index</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Crear(Coche coche)
+        public async Task<ActionResult> Crear(CocheViewModel modeloCoche)
         {
             if (!ModelState.IsValid)
             {
-                return this.View(coche);
+                return this.View(await llenarFormulario(modeloCoche));
             }
 
             using (var clienteHttp = new HttpClient())
             {
                 clienteHttp.BaseAddress = new Uri(urlBase);
                 HttpResponseMessage respuesta = await clienteHttp.PostAsync("api/coches", new StringContent(
-                    new JavaScriptSerializer().Serialize(coche), Encoding.UTF8, "application/json"));
+                    new JavaScriptSerializer().Serialize(modeloCoche.Coche), Encoding.UTF8, "application/json"));
 
                 if (respuesta.IsSuccessStatusCode)
                 {
@@ -117,6 +117,60 @@ namespace RentACar.Controllers
                 }
             }
             return this.RedirectToAction("Index");
+        }
+
+        public async Task<IEnumerable<Marca>> GetSelectMarcas()
+        {
+            using (var clienteHttp = new HttpClient())
+            {
+                clienteHttp.BaseAddress = new Uri(urlBase);
+                HttpResponseMessage respuesta = await clienteHttp.GetAsync("api/marcas");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = respuesta.Content.ReadAsStringAsync().Result;
+                    List<Marca> listaMarcas = JsonConvert.DeserializeObject<List<Marca>>(resultado);
+                    return listaMarcas;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<ColorCoche>> GetSelectColores()
+        {
+            using (var clienteHttp = new HttpClient())
+            {
+                clienteHttp.BaseAddress = new Uri(urlBase);
+                HttpResponseMessage respuesta = await clienteHttp.GetAsync("api/coloresCoche");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = respuesta.Content.ReadAsStringAsync().Result;
+                    List<ColorCoche> listaColores = JsonConvert.DeserializeObject<List<ColorCoche>>(resultado);
+                    return listaColores;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<Garaje>> GetSelectGarajes()
+        {
+            using (var clienteHttp = new HttpClient())
+            {
+                clienteHttp.BaseAddress = new Uri(urlBase);
+                HttpResponseMessage respuesta = await clienteHttp.GetAsync("api/garajes");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = respuesta.Content.ReadAsStringAsync().Result;
+                    List<Garaje> listaGarajes = JsonConvert.DeserializeObject<List<Garaje>>(resultado);
+                    return listaGarajes;
+                }
+            }
+
+            return null;
         }
 
         ////[HttpGet]

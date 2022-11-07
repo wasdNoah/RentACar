@@ -175,6 +175,7 @@
     <Content Include="Views\Clientes\Crear.cshtml" />
     <Content Include="Views\Clientes\Editar.cshtml" />
     <Content Include="Views\Reservas\Index.cshtml" />
+    <Content Include="Views\Reservas\Crear.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

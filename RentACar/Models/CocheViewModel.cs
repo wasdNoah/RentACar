@@ -10,9 +10,19 @@ namespace RentACar.Models
 {
     public class CocheViewModel
     {
-        public IEnumerable<Marca> SelectMarcas { get; set; }
-        public IEnumerable<ColorCoche> SelectColores { get; set; }
-        public IEnumerable<Garaje> SelectGarajes { get; set; }
+        public CocheViewModel()
+        {
+            this.SelectMarcas = new List<Marca>();
+            this.SelectGarajes = new List<Garaje>();
+            this.SelectColores = new List<ColorCoche>();
+        }
+
+        [Display(Name = "Seleccionar Marca")]
+        public List<Marca> SelectMarcas { get; set; }
+        [Display(Name = "Seleccionar Color")]
+        public List<ColorCoche> SelectColores { get; set; }
+        [Display(Name = "Seleccionar Garaje")]
+        public List<Garaje> SelectGarajes { get; set; }
         public Coche Coche { get; set; }
     }
 }
