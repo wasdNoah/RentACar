@@ -176,6 +176,7 @@
     <Content Include="Views\Clientes\Editar.cshtml" />
     <Content Include="Views\Reservas\Index.cshtml" />
     <Content Include="Views\Reservas\Crear.cshtml" />
+    <Content Include="Views\Reservas\BitacoraReservas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

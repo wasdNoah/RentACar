@@ -1,20 +1,10 @@
 ﻿@using RentACar_Modelos
 @model IEnumerable<Reserva>
 @{
-    ViewBag.Title = "Reservas";
+    ViewBag.Title = "BitacoraReservas";
 }
 
-<h2>Todas las reservas</h2>
-@Html.ActionLink("Agregar reserva", "Crear", null, new { @class = "btn btn-primary" })
-
-@if (this.ViewData["TextoBotonResultados"].ToString() == "Finalizadas")
-{
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "BitacoraReservas", null, new { @class = "btn btn-warning" })
-}
-else if (this.ViewData["TextoBotonResultados"].ToString() == "Todas")
-{
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "Index", null, new { @class = "btn btn-warning" })
-}
+<h2>Bitacora de Reservas</h2>
 
 @if (Model is null)
 {

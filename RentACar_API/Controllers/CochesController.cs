@@ -141,44 +141,71 @@ namespace RentACar_API.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> CrearCoche(Coche coche)
         {
-            if (coche != null)
-            {
-                SqlCommand cmd = new SqlCommand("pr_CrearCoche", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@matricula", coche.Matricula);
-                cmd.Parameters.AddWithValue("@precio_alquiler", coche.PrecioAlquiler);
-                cmd.Parameters.AddWithValue("@id_garaje", coche.IdGaraje);
-                cmd.Parameters.AddWithValue("@id_marca", coche.IdMarca);
-                cmd.Parameters.AddWithValue("@id_color", coche.IdColor);
-
-                try
-                {
-                    conn.Open();
-                    await cmd.ExecuteNonQueryAsync();
-                    conn.Close();
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
-                finally
-                {
-                    conn.Close();
-                }
-            }
-            else
+            if (coche is null)
             {
                 return BadRequest();
             }
-            return Ok();
+
+            SqlCommand cmd = new SqlCommand("pr_CrearCoche", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@matricula", coche.Matricula);
+            cmd.Parameters.AddWithValue("@precio_alquiler", coche.PrecioAlquiler);
+            cmd.Parameters.AddWithValue("@id_garaje", coche.IdGaraje);
+            cmd.Parameters.AddWithValue("@id_marca", coche.IdMarca);
+            cmd.Parameters.AddWithValue("@id_color", coche.IdColor);
+
+            try
+            {
+                conn.Open();
+                await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return Ok("Coche creado con exito");
+        }
+
+
+        [HttpGet]
+        [Route("api/cochesDisponibles")]
+        public IHttpActionResult ConsultarCochesDisponibles()
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter("pr_ListaCochesDisponibles", conn);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+
+            List<Coche> coches = new List<Coche>();
+
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    Coche coche = new Coche();
+                    coche.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
+                    coche.Matricula = dt.Rows[i]["Matricula"].ToString();
+                    coche.Color = dt.Rows[i]["Color"].ToString();
+                    coche.PrecioAlquiler = Convert.ToDecimal(dt.Rows[i]["PrecioAlquiler"]);
+                    coche.Garaje = dt.Rows[i]["Garaje"].ToString();
+                    coche.Marca = dt.Rows[i]["Marca"].ToString();
+                    coches.Add(coche);
+                }
+            }
+            return Ok(coches);
         }
 
         ////[HttpGet]
         ////[Route("api/coches/{idFiltro}")]
         ////public async Task<IHttpActionResult> ConsultarPorFiltro(int idFiltro)
         ////{
-            
+
         ////}
     }
 }

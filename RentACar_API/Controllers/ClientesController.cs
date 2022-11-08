@@ -103,7 +103,7 @@ namespace RentACar_API.Controllers
         }
 
         /// <summary>
-        /// Actualiza los datos de un usuario
+        /// Actualiza los datos de un cliente
         /// </summary>
         /// <param name="cliente"></param>
         /// <returns>HttpActionResult</returns>
@@ -140,6 +140,11 @@ namespace RentACar_API.Controllers
             return this.Ok();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("api/clientes/{id}")]
         public async Task<IHttpActionResult> EliminarCliente(int id)

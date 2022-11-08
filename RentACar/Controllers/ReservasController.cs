@@ -21,6 +21,8 @@ namespace RentACar.Controllers
         // GET: Reservas
         public async Task<ActionResult> Index()
         {
+            this.ViewData["TextoBotonResultados"] = "Finalizadas";
+
             using (var httpCliente = new HttpClient())
             {
                 httpCliente.BaseAddress = new Uri(urlBase);
@@ -68,13 +70,33 @@ namespace RentACar.Controllers
                         this.ViewData["MensajeExito"] = await respuesta.Content.ReadAsStringAsync();
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw;
                 }
             }
 
             return this.View();
+        }
+
+        public async Task<ActionResult> BitacoraReservas()
+        {
+            this.ViewData["TextoBotonResultados"] = "Todas";
+
+            using (var clientHttp = new HttpClient())
+            {
+                clientHttp.BaseAddress = new Uri(urlBase);
+                var respuesta = await clientHttp.GetAsync("api/reservasFinalizadas");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = await respuesta.Content.ReadAsStringAsync();
+                    List<Reserva> listaReservas = JsonConvert.DeserializeObject<List<Reserva>>(resultado);
+                    return this.View("Index", listaReservas);
+                }
+            }
+
+            return this.View("Index");
         }
     }
 }

@@ -148,5 +148,36 @@ namespace RentACar_API.Controllers
 
             return Ok("Reserva creada exitosamente.");
         }
+
+        [HttpGet]
+        [Route("api/reservasFinalizadas")]
+        public IHttpActionResult ConsultarReservasFinalizadas()
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarReservasFinalizadas", conn);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+
+            List<Reserva> reservas = new List<Reserva>();
+
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    Reserva reserva = new Reserva();
+                    reserva.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
+                    reserva.FechaInicio = DateTime.Parse(dt.Rows[i]["FechaInicio"].ToString());
+                    reserva.FechaFin = DateTime.Parse(dt.Rows[i]["FechaFin"].ToString());
+                    reserva.IdCliente = Convert.ToInt32(dt.Rows[i]["IdCliente"]);
+                    reserva.NombreCliente = dt.Rows[i]["NombreCliente"].ToString();
+                    reserva.Matricula = dt.Rows[i]["Matricula"].ToString();
+                    reserva.PrecioAlquilerCoche = Convert.ToDecimal(dt.Rows[i]["PrecioAlquilerCoche"]);
+                    reserva.PrecioTotal = Convert.ToDecimal(dt.Rows[i]["PrecioTotal"]);
+                    reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
+                    reservas.Add(reserva);
+                }
+            }
+
+            return this.Ok(reservas);
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace RentACar.Controllers
         /// <returns>Una vista</returns>
         public async Task<ActionResult> Index()
         {
+            this.ViewData["TextoBotonResultados"] = "Disponibles";
+
             using (var clienteHttp = new HttpClient())
             {
                 clienteHttp.BaseAddress = new Uri(urlBase);
@@ -169,6 +171,26 @@ namespace RentACar.Controllers
             }
 
             return null;
+        }
+
+        public async Task<ActionResult> ConsultarListaDisponibles()
+        {
+            this.ViewData["TextoBotonResultados"] = "Todos";
+
+            using (var clientHttp = new HttpClient())
+            {
+                clientHttp.BaseAddress = new Uri(urlBase);
+                var respuesta = await clientHttp.GetAsync("api/cochesDisponibles");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = await respuesta.Content.ReadAsStringAsync();
+                    List<Coche> listaCoches = JsonConvert.DeserializeObject<List<Coche>>(resultado);
+                    return this.View("Index", listaCoches);
+                }
+            }
+
+            return this.View("Index");
         }
 
         ////[HttpGet]
