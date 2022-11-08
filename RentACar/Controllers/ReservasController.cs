@@ -70,7 +70,6 @@ namespace RentACar.Controllers
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.ToString());
                     throw;
                 }
             }

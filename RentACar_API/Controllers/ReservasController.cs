@@ -55,10 +55,11 @@ namespace RentACar_API.Controllers
             }
 
             // verificar que el coche se encuentre disponible
-            using (SqlCommand cmd = new SqlCommand("pr_ConsultarCocheDisponible", conn))
+            using (SqlCommand cmd = new SqlCommand("pr_ConcheSeEncuentraEnReservaActiva", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@matricula", reserva.Matricula);
+                cmd.Parameters.AddWithValue("@fecha_inicio_nueva_reserva", reserva.FechaFin);
 
                 IDbDataParameter resultadoSP = cmd.CreateParameter();
                 resultadoSP.Direction = ParameterDirection.ReturnValue;
@@ -70,7 +71,7 @@ namespace RentACar_API.Controllers
                     await cmd.ExecuteNonQueryAsync();
                     conn.Close();
 
-                    if (Convert.ToInt32(resultadoSP.Value) == 0)
+                    if (Convert.ToInt32(resultadoSP.Value) == 1)
                     {
                         return BadRequest("El coche no se encuentra disponible.");
                     }

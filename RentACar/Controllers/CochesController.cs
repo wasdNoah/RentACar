@@ -18,10 +18,10 @@ namespace RentACar.Controllers
     {
         string urlBase = "https://localhost:44317";
 
-        //private readonly HttpClient _httpClient = new HttpClient()
-        //{
-        //    BaseAddress = new Uri("https://localhost:44317")
-        //};
+        ////private readonly HttpClient _httpClient = new HttpClient()
+        ////{
+        ////    BaseAddress = new Uri("https://localhost:44317")
+        ////};
 
         /// <summary>
         /// Consume endpoint para obtener todos los clientes y los envia a la vista
@@ -49,7 +49,7 @@ namespace RentACar.Controllers
             return this.View();
         }
 
-        private async Task<CocheViewModel> llenarFormulario(CocheViewModel modelo = null)
+        private async Task<CocheViewModel> llenarModelo(CocheViewModel modelo = null)
         {
             var marcas = await GetSelectMarcas();
             var colores = await GetSelectColores();
@@ -81,9 +81,7 @@ namespace RentACar.Controllers
         [HttpGet]
         public async Task<ActionResult> Crear()
         {
-            return this.View(await llenarFormulario());
-            ////this.ViewData["MensajeError"] = "Error al recopilar informacion para crear el coche.";
-            ////return this.RedirectToAction("Index");
+            return this.View(await llenarModelo());
         }
 
         /// <summary>
@@ -97,7 +95,7 @@ namespace RentACar.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return this.View(await llenarFormulario(modeloCoche));
+                return this.View(await llenarModelo(modeloCoche));
             }
 
             using (var clienteHttp = new HttpClient())
