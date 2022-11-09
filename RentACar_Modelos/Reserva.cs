@@ -18,5 +18,7 @@ namespace RentACar_Modelos
         public int DiasAlquiler { get; set; }
         public decimal PrecioAlquilerCoche { get; set; }
         public decimal PrecioTotal { get; set; }
+        public int IdVendedor { get; set; }
+        public string NombreVendedor { get; set; }
     }
 }

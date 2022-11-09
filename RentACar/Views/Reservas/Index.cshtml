@@ -32,6 +32,8 @@ else
                 <th scope="col">Fecha Inicio</th>
                 <th scope="col">Fecha Final</th>
                 <th scope="col">Precio Total</th>
+                <th scope="col">Id de Vendedor</th>
+                <th scope="col">Nombre de Vendedor</th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +47,8 @@ else
                     <td scope="row">@reserva.FechaInicio.ToShortDateString()</td>
                     <td scope="row">@reserva.FechaFin.ToShortDateString()</td>
                     <td scope="row">@reserva.PrecioTotal</td>
+                    <td scope="row">@reserva.IdVendedor</td>
+                    <td scope="row">@reserva.NombreVendedor</td>
                 </tr>
             }
         </tbody>

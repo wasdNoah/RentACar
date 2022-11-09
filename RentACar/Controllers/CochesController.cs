@@ -57,7 +57,7 @@ namespace RentACar.Controllers
             var colores = await GetSelectColores();
             var garajes = await GetSelectGarajes();
 
-            if (modelo == null)
+            if (modelo is null)
             {
                 modelo = new CocheViewModel()
                 {

@@ -40,6 +40,8 @@ namespace RentACar_API.Controllers
                     reserva.PrecioAlquilerCoche = Convert.ToDecimal(dt.Rows[i]["PrecioAlquilerCoche"]);
                     reserva.PrecioTotal = Convert.ToDecimal(dt.Rows[i]["PrecioTotal"]);
                     reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
+                    reserva.IdVendedor = Convert.ToInt32(dt.Rows[i]["IdVendedor"]);
+                    reserva.NombreVendedor = dt.Rows[i]["NombreVendedor"].ToString();
                     reservas.Add(reserva);
                 }
             }
@@ -173,6 +175,8 @@ namespace RentACar_API.Controllers
                     reserva.PrecioAlquilerCoche = Convert.ToDecimal(dt.Rows[i]["PrecioAlquilerCoche"]);
                     reserva.PrecioTotal = Convert.ToDecimal(dt.Rows[i]["PrecioTotal"]);
                     reserva.DiasAlquiler = Convert.ToInt32(dt.Rows[i]["DiasAlquiler"]);
+                    reserva.IdVendedor = Convert.ToInt32(dt.Rows[i]["IdVendedor"]);
+                    reserva.NombreVendedor = dt.Rows[i]["NombreVendedor"].ToString();
                     reservas.Add(reserva);
                 }
             }
