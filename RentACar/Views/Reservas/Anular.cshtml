@@ -1,0 +1,51 @@
+﻿@using RentACar_Modelos
+@model Reserva
+@{
+    ViewBag.Title = "Editar";
+}
+
+@if (ViewData.ContainsKey("MensajeError"))
+{
+    <h4 class="alert alert-danger">@ViewData["MensajeError"]</h4>
+}
+else if (ViewData.ContainsKey("MensajeExito"))
+{
+    <h4 class="alert alert-success">@ViewData["MensajeExito"]</h4>
+}
+else
+{
+    <h2>Anular Reserva</h2>
+    <h3>En caso de devolución cambiar estado de "EsActiva" a 0</h3>
+    using (Html.BeginForm("Editar", "Reservas", FormMethod.Post))
+    {
+        <div>@Html.AntiForgeryToken()</div>
+
+        <div class="form-group">
+            @Html.LabelFor(r => r.Matricula)
+            @Html.EditorFor(r => r.Matricula, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(r => r.IdCliente)
+            @Html.EditorFor(r => r.IdCliente, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @disabled = "disabled" } })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(r => r.FechaInicio)
+            @Html.TextBoxFor(r => r.FechaInicio, new { @class = "form-control datepicker", @disabled = "disabled" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(r => r.FechaFin)
+            @Html.TextBoxFor(r => r.FechaFin, new { @class = "form-control datepicker", @disabled = "disabled" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(r => r.EsActiva)
+            @Html.EditorFor(r => r.EsActiva, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0" } })
+        </div>
+
+        <input type="submit" class="btn btn-primary" value="Actualizar" />
+    }
+}
+

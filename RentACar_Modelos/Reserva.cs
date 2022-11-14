@@ -20,5 +20,6 @@ namespace RentACar_Modelos
         public decimal PrecioTotal { get; set; }
         public int IdVendedor { get; set; }
         public string NombreVendedor { get; set; }
+        public int EsActiva { get; set; }
     }
 }

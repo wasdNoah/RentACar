@@ -9,11 +9,11 @@
 
 @if (this.ViewData["TextoBotonResultados"].ToString() == "Finalizadas")
 {
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "BitacoraReservas", null, new { @class = "btn btn-warning" })
+    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "BitacoraReservas", null, new { @class = "btn btn-danger" })
 }
 else if (this.ViewData["TextoBotonResultados"].ToString() == "Todas")
 {
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "Index", null, new { @class = "btn btn-warning" })
+    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "Index", null, new { @class = "btn btn-primary" })
 }
 
 @if (Model is null)
@@ -49,6 +49,9 @@ else
                     <td scope="row">@reserva.PrecioTotal</td>
                     <td scope="row">@reserva.IdVendedor</td>
                     <td scope="row">@reserva.NombreVendedor</td>
+                    <td>
+                        @Html.ActionLink("Anular", "Anular", new { idReserva = reserva.Id }, new { @class = "btn btn-danger" })
+                    </td>
                 </tr>
             }
         </tbody>

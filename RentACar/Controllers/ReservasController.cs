@@ -69,6 +69,10 @@ namespace RentACar.Controllers
                     {
                         this.ViewData["MensajeExito"] = await respuesta.Content.ReadAsStringAsync();
                     }
+                    else if (respuesta.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                    {
+                        this.ViewData["MensajeError"] = "Error de lado de servidor.";
+                    }
                 }
                 catch (Exception)
                 {
@@ -97,6 +101,43 @@ namespace RentACar.Controllers
             }
 
             return this.View("Index");
+        }
+
+        public async Task<ActionResult> Anular(int? idReserva)
+        {
+            if (idReserva is null)
+            {
+                this.ViewData["MensajeError"] = "Por favor, proveer el ID de la reserva.";
+                return this.View();
+            }
+
+            using (var clienteHttp = new HttpClient())
+            {
+                clienteHttp.BaseAddress = new Uri(urlBase);
+                HttpResponseMessage respuesta = await clienteHttp.GetAsync($"api/reservas/{idReserva}");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string resultado = await respuesta.Content.ReadAsStringAsync();
+                    Reserva reservaEncontrada = JsonConvert.DeserializeObject<Reserva>(resultado);
+
+                    this.Session["IdReserva"] = reservaEncontrada.Id;
+                    return this.View(reservaEncontrada);
+                }
+
+                JObject contenidoRespuesta = JObject.Parse(await respuesta.Content.ReadAsStringAsync());
+                string mensajeApi = contenidoRespuesta.GetValue("Message").ToString();
+                this.ViewData["MensajeError"] = mensajeApi;
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Anular()
+        {
+            return this.View();
         }
     }
 }

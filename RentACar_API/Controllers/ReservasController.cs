@@ -20,7 +20,7 @@ namespace RentACar_API.Controllers
         [HttpGet]
         public IEnumerable<Reserva> ConsultarReservas()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarReservas", conn);
+            SqlDataAdapter adapter = new SqlDataAdapter("reservas.pr_ConsultarReservas", conn);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
 
@@ -57,7 +57,7 @@ namespace RentACar_API.Controllers
             }
 
             // verificar que el coche se encuentre disponible
-            using (SqlCommand cmd = new SqlCommand("pr_ConcheSeEncuentraEnReservaActiva", conn))
+            using (SqlCommand cmd = new SqlCommand("reservas.pr_ConcheSeEncuentraEnReservaActiva", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@matricula", reserva.Matricula);
@@ -90,7 +90,7 @@ namespace RentACar_API.Controllers
             }
 
             // verificar si el cliente cuenta con alguna reserva activa
-            using (SqlCommand cmd = new SqlCommand("pr_ClienteCuentaConReservaActiva", conn))
+            using (SqlCommand cmd = new SqlCommand("reservas.pr_ClienteCuentaConReservaActiva", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@id_cliente", reserva.IdCliente);
@@ -123,13 +123,14 @@ namespace RentACar_API.Controllers
 
             // el coche se encuentra disponible y el cliente no cuenta con reservas activas
             // el flujo continua con la creacion de la reserva
-            using (SqlCommand cmd = new SqlCommand("pr_CrearReserva", conn))
+            using (SqlCommand cmd = new SqlCommand("reservas.pr_CrearReserva", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@id_cliente", reserva.IdCliente);
                 cmd.Parameters.AddWithValue("@matricula", reserva.Matricula);
                 cmd.Parameters.AddWithValue("@fecha_inicio", reserva.FechaInicio);
                 cmd.Parameters.AddWithValue("@fecha_fin", reserva.FechaFin);
+                cmd.Parameters.AddWithValue("@id_vendedor", reserva.IdVendedor);
 
                 try
                 {
@@ -139,8 +140,7 @@ namespace RentACar_API.Controllers
                 }
                 catch (Exception)
                 {
-
-                    throw;
+                    return this.InternalServerError();
                 }
                 finally
                 {
@@ -155,7 +155,7 @@ namespace RentACar_API.Controllers
         [Route("api/reservasFinalizadas")]
         public IHttpActionResult ConsultarReservasFinalizadas()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarReservasFinalizadas", conn);
+            SqlDataAdapter adapter = new SqlDataAdapter("reservas.pr_ConsultarReservasFinalizadas", conn);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
 
@@ -182,6 +182,44 @@ namespace RentACar_API.Controllers
             }
 
             return this.Ok(reservas);
+        }
+
+        [HttpGet]
+        [Route("api/reservas/{id}")]
+        public IHttpActionResult ConsultarReserva(int? id)
+        {
+            // Verifica si existe el ID y si es valido
+            if (id is null || id <= 0)
+            {
+                return BadRequest("Debe proveer el ID, y éste no debe ser igual o menor a cero.");
+            }
+
+            SqlCommand cmd = new SqlCommand("reservas.pr_ConsultarReservaPorId", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id_reserva", id);
+
+            DataTable dt = new DataTable();
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            adapter.SelectCommand = cmd;
+            adapter.Fill(dt);
+
+            // verifica que exista una reserva con el id proveido
+            if (dt.Rows.Count == 0)
+            {
+                return BadRequest($"No existe la reserva con ID {id}");
+            }
+
+            DataRow primerElemento = dt.Rows[0];
+            Reserva reserva = new Reserva();
+
+            reserva.Id = Convert.ToInt32(primerElemento["Id"]);
+            reserva.Matricula = primerElemento["MatriculaCoche"].ToString();
+            reserva.IdCliente = Convert.ToInt32(primerElemento["IdCliente"]);
+            reserva.FechaInicio = DateTime.Parse(primerElemento["FechaInicio"].ToString());
+            reserva.FechaFin = DateTime.Parse(primerElemento["FechaFin"].ToString());
+            reserva.EsActiva = Convert.ToInt32(primerElemento["EsActiva"]);
+
+            return this.Ok(reserva);
         }
     }
 }
