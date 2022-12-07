@@ -2,7 +2,7 @@
 @model IEnumerable<Coche>
 
 <h1>Coches</h1>
-@Html.ActionLink("Nuevo Coche", "Crear", null, new { @class = "btn btn-primary" })
+@*@Html.ActionLink("Nuevo Coche", "Crear", null, new { @class = "btn btn-primary" })
 
 @if (this.ViewData["TextoBotonResultados"].ToString() == "Disponibles")
 {
@@ -11,7 +11,7 @@
 else if (this.ViewData["TextoBotonResultados"].ToString() == "Todos")
 {
     @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "Index", null, new { @class = "btn btn-warning" })
-}
+}*@
 
 @if (Model != null)
 {

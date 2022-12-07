@@ -7,13 +7,13 @@
 <h2>Todas las reservas</h2>
 @Html.ActionLink("Agregar reserva", "Crear", null, new { @class = "btn btn-primary" })
 
-@if (this.ViewData["TextoBotonResultados"].ToString() == "Finalizadas")
+@if (this.ViewData["ResultadosEnPantalla"].ToString() == "Inactivas")
 {
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "BitacoraReservas", null, new { @class = "btn btn-danger" })
+    @Html.ActionLink("Ver Activas", "Index", null, new { @class = "btn btn-success" })
 }
-else if (this.ViewData["TextoBotonResultados"].ToString() == "Todas")
+else if (this.ViewData["ResultadosEnPantalla"].ToString() == "Activas")
 {
-    @Html.ActionLink(this.ViewData["TextoBotonResultados"].ToString(), "Index", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Ver Inactivas", "VerFinalizadas", null, new { @class = "btn btn-danger" })
 }
 
 @if (Model is null)
@@ -50,7 +50,7 @@ else
                     <td scope="row">@reserva.IdVendedor</td>
                     <td scope="row">@reserva.NombreVendedor</td>
                     <td>
-                        @Html.ActionLink("Anular", "Anular", new { idReserva = reserva.Id }, new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Modificar Estado", "ActualizarEstado", new { idReserva = reserva.Id }, new { @class = "btn btn-warning" })
                     </td>
                 </tr>
             }

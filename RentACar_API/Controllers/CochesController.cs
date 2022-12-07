@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RentACar_API.Controllers
 {
-    [Route("api/coches")]
+    [RoutePrefix("api")]
     public class CochesController : ApiController
     {
         SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["webapi_conn"].ConnectionString);
@@ -22,6 +22,7 @@ namespace RentACar_API.Controllers
         /// </summary>
         /// <returns>Objeto IEnumerable con los coches</returns>
         [HttpGet]
+        [Route("coches")]
         public IEnumerable<Coche> ConsultarCoches()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarCoches", conn);
@@ -54,7 +55,7 @@ namespace RentACar_API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/garajes")]
+        [Route("garajes")]
         public IHttpActionResult ConsultarGarajes()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarGarajes", conn);
@@ -82,7 +83,7 @@ namespace RentACar_API.Controllers
         /// </summary>
         /// <returns>HttpResult</returns>
         [HttpGet]
-        [Route("api/marcas")]
+        [Route("marcas")]
         public IHttpActionResult ConsultarMarcas()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarMarcas", conn);
@@ -110,7 +111,7 @@ namespace RentACar_API.Controllers
         /// </summary>
         /// <returns>HttpResult</returns>
         [HttpGet]
-        [Route("api/coloresCoche")]
+        [Route("coloresCoche")]
         public IHttpActionResult ConsultarColoresCoche()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("pr_ConsultarColoresCoche", conn);
@@ -139,6 +140,7 @@ namespace RentACar_API.Controllers
         /// <param name="coche">Objeto con la informacion del coche</param>
         /// <returns>HttpResult</returns>
         [HttpPost]
+        [Route("coches")]
         public async Task<IHttpActionResult> CrearCoche(Coche coche)
         {
             if (coche is null)
@@ -175,7 +177,7 @@ namespace RentACar_API.Controllers
 
 
         [HttpGet]
-        [Route("api/cochesDisponibles")]
+        [Route("cochesDisponibles")]
         public IHttpActionResult ConsultarCochesDisponibles()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("pr_ListaCochesDisponibles", conn);

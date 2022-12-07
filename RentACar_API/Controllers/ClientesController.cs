@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RentACar_API.Controllers
 {
-    [Route("api/clientes")]
+    [RoutePrefix("api/clientes")]
     public class ClientesController : ApiController
     {
         SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["webapi_conn"].ConnectionString);
@@ -44,7 +44,7 @@ namespace RentACar_API.Controllers
         }
 
         [HttpGet]
-        [Route("api/clientes/{id}")]
+        [Route("{id}")]
         public IHttpActionResult ConsultarCliente(int id)
         {
             SqlCommand cmd = new SqlCommand("pr_ConsultarCliente", conn);
@@ -146,7 +146,7 @@ namespace RentACar_API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("api/clientes/{id}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> EliminarCliente(int id)
         {
             SqlCommand cmd = new SqlCommand("pr_CambiarEstadoCliente", conn);

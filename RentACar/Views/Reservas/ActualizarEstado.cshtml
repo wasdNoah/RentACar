@@ -1,7 +1,7 @@
 ﻿@using RentACar_Modelos
 @model Reserva
 @{
-    ViewBag.Title = "Editar";
+    ViewBag.Title = "Anular";
 }
 
 @if (ViewData.ContainsKey("MensajeError"))
@@ -16,7 +16,8 @@ else
 {
     <h2>Anular Reserva</h2>
     <h3>En caso de devolución cambiar estado de "EsActiva" a 0</h3>
-    using (Html.BeginForm("Editar", "Reservas", FormMethod.Post))
+    @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+    using (Html.BeginForm("ActualizarEstado", "Reservas", FormMethod.Post))
     {
         <div>@Html.AntiForgeryToken()</div>
 

@@ -21,7 +21,7 @@ namespace RentACar.Controllers
         // GET: Reservas
         public async Task<ActionResult> Index()
         {
-            this.ViewData["TextoBotonResultados"] = "Finalizadas";
+            this.ViewData["ResultadosEnPantalla"] = "Activas";
 
             using (var httpCliente = new HttpClient())
             {
@@ -83,9 +83,9 @@ namespace RentACar.Controllers
             return this.View();
         }
 
-        public async Task<ActionResult> BitacoraReservas()
+        public async Task<ActionResult> VerFinalizadas()
         {
-            this.ViewData["TextoBotonResultados"] = "Todas";
+            this.ViewData["ResultadosEnPantalla"] = "Inactivas";
 
             using (var clientHttp = new HttpClient())
             {
@@ -103,7 +103,8 @@ namespace RentACar.Controllers
             return this.View("Index");
         }
 
-        public async Task<ActionResult> Anular(int? idReserva)
+        [HttpGet]
+        public async Task<ActionResult> ActualizarEstado(int? idReserva)
         {
             if (idReserva is null)
             {
@@ -135,8 +136,33 @@ namespace RentACar.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Anular()
+        public async Task<ActionResult> ActualizarEstado([Bind(Exclude = "Id")]Reserva reserva)
         {
+            using (var clienteHttp = new HttpClient())
+            {
+                clienteHttp.BaseAddress = new Uri(urlBase);
+                HttpResponseMessage respuesta = await clienteHttp.PutAsync($"api/reservas/{this.Session["IdReserva"]}/{reserva.EsActiva}", new StringContent(
+                    new JavaScriptSerializer().Serialize(reserva), Encoding.UTF8, "application/json"));
+
+                // si algo sale mal con la peticion
+                if (respuesta.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    JObject contenidoRespuesta = JObject.Parse(await respuesta.Content.ReadAsStringAsync());
+                    string mensajeApi = contenidoRespuesta.GetValue("Message").ToString();
+
+                    this.ViewData["MensajeError"] = mensajeApi;
+                    return this.View();
+                }
+                else if (respuesta.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    this.ViewData["MensajeExito"] = await respuesta.Content.ReadAsStringAsync();
+                }
+                else if (respuesta.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                {
+                    this.ViewData["MensajeError"] = "Error de lado de servidor.";
+                }
+            }
+
             return this.View();
         }
     }

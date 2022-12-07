@@ -20,6 +20,7 @@ namespace RentACar_Modelos
         public decimal PrecioTotal { get; set; }
         public int IdVendedor { get; set; }
         public string NombreVendedor { get; set; }
+        [Display(Name = "¿Actualmente activa?")]
         public int EsActiva { get; set; }
     }
 }

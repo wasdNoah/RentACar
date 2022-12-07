@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RentACar_API.Controllers
 {
-    [Route("api/reservas")]
+    [RoutePrefix("api/reservas")]
     public class ReservasController : ApiController
     {
         SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["webapi_conn"].ConnectionString);
@@ -20,7 +20,7 @@ namespace RentACar_API.Controllers
         [HttpGet]
         public IEnumerable<Reserva> ConsultarReservas()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter("reservas.pr_ConsultarReservas", conn);
+            SqlDataAdapter adapter = new SqlDataAdapter("reservas.pr_ConsultarReservasActivas", conn);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
 
@@ -81,7 +81,7 @@ namespace RentACar_API.Controllers
                 catch (Exception)
                 {
 
-                    throw;
+                    return this.InternalServerError();
                 }
                 finally
                 {
@@ -113,7 +113,7 @@ namespace RentACar_API.Controllers
                 catch (Exception)
                 {
 
-                    throw;
+                    return this.InternalServerError();
                 }
                 finally
                 {
@@ -152,7 +152,7 @@ namespace RentACar_API.Controllers
         }
 
         [HttpGet]
-        [Route("api/reservasFinalizadas")]
+        [Route("~/api/reservasFinalizadas")]
         public IHttpActionResult ConsultarReservasFinalizadas()
         {
             SqlDataAdapter adapter = new SqlDataAdapter("reservas.pr_ConsultarReservasFinalizadas", conn);
@@ -185,7 +185,7 @@ namespace RentACar_API.Controllers
         }
 
         [HttpGet]
-        [Route("api/reservas/{id}")]
+        [Route("{id:int}")]
         public IHttpActionResult ConsultarReserva(int? id)
         {
             // Verifica si existe el ID y si es valido
@@ -220,6 +220,43 @@ namespace RentACar_API.Controllers
             reserva.EsActiva = Convert.ToInt32(primerElemento["EsActiva"]);
 
             return this.Ok(reserva);
+        }
+
+        [HttpPut]
+        [Route("{id:int}/{nuevo_estado:int}")]
+        public async Task<IHttpActionResult> ActualizarEstadoReserva(int? id, int? nuevo_estado)
+        {
+            if (id is null || id <= 0)
+            {
+                return BadRequest("Debe proveer el ID de la reserva, y éste no debe ser igual o menor a cero.");
+            }
+
+            if (nuevo_estado is null || (nuevo_estado < 0 || nuevo_estado > 1))
+            {
+                return BadRequest("El nuevo estado únicamente puede ser 0 o 1.");
+            }
+
+            SqlCommand cmd = new SqlCommand("reservas.pr_ActualizarEstadoReserva", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id_reserva", id);
+            cmd.Parameters.AddWithValue("@nuevo_estado", nuevo_estado);
+
+            try
+            {
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+            }
+            catch (Exception)
+            {
+                return this.InternalServerError();
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return this.Ok("Reserva actualizada.");
         }
     }
 }
